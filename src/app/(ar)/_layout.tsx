@@ -1,4 +1,4 @@
-export function Scanner() {
+export function _layout() {
     return (
         <></>
     );

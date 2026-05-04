@@ -40,7 +40,7 @@ export default function HomeScreen() {
                     <AnimatedIcon/>
                     <ThemedText type="title" style={styles.title}>
                         <Link href={"/(tabs)/explore"}>
-                            <Text>Explore</Text>
+                            <Text>Changed</Text>
                         </Link>
                     </ThemedText>
                 </ThemedView>

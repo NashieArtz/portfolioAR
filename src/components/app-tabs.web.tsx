@@ -313,6 +313,7 @@ function TopBar() {
 // Détecte si on est sur mobile ou desktop et affiche la bonne nav
 // ═══════════════════════════════════════════════════════════════════════════
 export default function AppTabs() {
+<<<<<<< Updated upstream
     const [isOpen, setIsOpen] = useState(false);
     const toggle = () => setIsOpen(prev => !prev);
     const close  = () => setIsOpen(false);
@@ -341,6 +342,34 @@ export default function AppTabs() {
 
         </DrawerContext.Provider>
     );
+=======
+  return (
+    <Tabs>
+      <TabSlot style={{ height: '100%' }} />
+      <TabList asChild>
+        <CustomTabList>
+          <TabTrigger name="index" href="/" asChild>
+            <TabButton>Home</TabButton>
+          </TabTrigger>
+          {/*
+          <TabTrigger name="projets" href="/projets" asChild>
+            <TabButton>Projets</TabButton>
+          </TabTrigger>
+          <TabTrigger name="about" href="/about" asChild>
+            <TabButton>About</TabButton>
+          </TabTrigger>
+          <TabTrigger name="contact" href="/contact" asChild>
+            <TabButton>Contact</TabButton>
+          </TabTrigger>
+          */}
+          <TabTrigger name="scanner" href="/scanner" asChild>
+            <TabButton>Vue AR</TabButton>
+          </TabTrigger>
+        </CustomTabList>
+      </TabList>
+    </Tabs>
+  );
+>>>>>>> Stashed changes
 }
 
 

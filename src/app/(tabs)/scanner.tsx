@@ -1,5 +1,6 @@
-import {View, Text, Pressable, StyleSheet} from 'react-native';
+import {View, Text, Pressable, StyleSheet, Button} from 'react-native';
 import {useRouter} from 'expo-router';
+import {Spacing} from '@/constants/theme';
 
 export default function Scanner() {
 
@@ -13,6 +14,11 @@ export default function Scanner() {
                        onPress={() => router.navigate('/ar-view')}>
                 <Text style={styles.buttonText}>Voir en AR</Text>
             </Pressable>
+
+            <Button
+                    title="Voir en AR"
+                    onPress={() => router.navigate('/ar-view')}>
+            </Button>
         </View>
     );
 }
@@ -21,14 +27,14 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
     },
-    title: {
-
-    },
+    title: {},
     button: {
-
+        marginTop: Spacing.five,
+        padding: 5,
+        borderStyle: 'solid',
+        borderColor: 'gray',
+        borderWidth: 3,
     },
-    buttonText: {
-
-    },
+    buttonText: {},
 
 })

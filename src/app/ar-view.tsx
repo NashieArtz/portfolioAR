@@ -1,25 +1,47 @@
-import { Text, View, StyleSheet } from 'react-native';
+import React from 'react';
 
-const contentHTML =
-    '<!DOCTYPE html><html lang="en"> <head> <meta charset="UTF-8"> <title>Title</title> </head><body> <a-marker type="pattern"/></body></html>';
+const contentHTML = `
+  <!DOCTYPE html>
+  <html lang="fr">
+  <head>
+      <meta charset="UTF-8">
+      <title>Portfolio AR</title>
+      <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+      <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+      <style>
+        body, html, #root, #__next {
+            background: transparent !important;
+        }
+        /* On s'assure que la vidéo AR.js n'est pas bloquée */
+        video {
+            display: block !important;
+        }
+      </style>
+  </head>
+  <body style='margin : 0; overflow: hidden; background-color: transparent;'>
+  <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
+      <a-marker type="pattern" url="/portfolio.patt">
+          <a-text 
+              value="Developpeur Full-Stack" 
+          </a-text>
+      </a-marker>
+      <a-entity camera></a-entity>
+  </a-scene>
+  </body>
+  </html>
+`;
 
 export default function ArView() {
     return (
-        <View>
-
-        </View>
+        <div
+            dangerouslySetInnerHTML={{ __html: contentHTML }}
+            style={{
+                width: '100vw',
+                height: '100vh',
+                margin: 0,
+                padding: 0,
+                backgroundColor: 'transparent'
+            }}
+        />
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#25292e',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        color: '#fff',
-    },
-});
-

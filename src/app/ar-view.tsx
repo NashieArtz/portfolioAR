@@ -1,9 +1,12 @@
 import { Text, View, StyleSheet } from 'react-native';
 
-export default function Test() {
+const contentHTML =
+    '<!DOCTYPE html><html lang="en"> <head> <meta charset="UTF-8"> <title>Title</title> </head><body> <a-marker type="pattern"/></body></html>';
+
+export default function ArView() {
     return (
         <View>
-            <Text> About </Text>
+
         </View>
     );
 }
@@ -19,3 +22,4 @@ const styles = StyleSheet.create({
         color: '#fff',
     },
 });
+

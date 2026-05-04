@@ -1,4 +1,4 @@
-export function _layout() {
+export default function About() {
     return (
         <></>
     );

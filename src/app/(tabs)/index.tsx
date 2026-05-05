@@ -1,104 +1,177 @@
-import * as Device from 'expo-device';
-import {Platform, StyleSheet, Button, View, Text, StatusBar} from 'react-native';
-import {SafeAreaView} from 'react-native-safe-area-context';
-import {useRouter, Link} from 'expo-router';
+import { useRouter } from 'expo-router';
+import {
+    Image,
+    ImageBackground,
+    Pressable,
+    StyleSheet,
+    Text,
+    useWindowDimensions,
+    View,
+} from 'react-native';
 
-import {AnimatedIcon} from '@/components/animated-icon';
-import {HintRow} from '@/components/hint-row';
-import {ThemedText} from '@/components/themed-text';
-import {ThemedView} from '@/components/themed-view';
-import {WebBadge} from '@/components/web-badge';
-import {BottomTabInset, MaxContentWidth, Spacing} from '@/constants/theme';
+import { Colors, Spacing } from '@/constants/theme';
 
-function getDevMenuHint() {
-    if (Platform.OS === 'web') {
-        return <ThemedText type="small">use browser devtools</ThemedText>;
-    }
-    if (Device.isDevice) {
-        return (
-            <ThemedText type="small">
-                shake device or press <ThemedText type="code">m</ThemedText> in terminal
-            </ThemedText>
-        );
-    }
-    const shortcut = Platform.OS === 'android' ? 'cmd+m (or ctrl+m)' : 'cmd+d';
+const DESKTOP_BP = 768;
+const TOPBAR_H   = 56;
+
+function HeroText({ onPress, style }: { onPress: () => void, style?: any }) {
     return (
-        <ThemedText type="small">
-            press <ThemedText type="code">{shortcut}</ThemedText>
-        </ThemedText>
+        <View style={[styles.heroText, style]}>
+
+            <View style={styles.badge}>
+                <Text style={styles.badgeText}>✦ AR PORTFOLIO</Text>
+            </View>
+
+            <Text style={styles.title}>
+                {'Portfolio\nimmersif en\n'}
+                <Text style={styles.titleAccent}>réalité augmentée</Text>
+            </Text>
+
+            <Text style={styles.subtitle}>
+                {"Découvrez mes projets web\nd'une nouvelle manière."}
+            </Text>
+
+            <Pressable
+                onPress={onPress}
+                style={({ pressed }) => [styles.ctaBtn, pressed && styles.ctaBtnPressed]}
+            >
+                <Text style={styles.ctaText}>LANCER L'EXPÉRIENCE</Text>
+            </Pressable>
+
+        </View>
     );
 }
 
+// ─── Image du téléphone ───────────────────────────────────────────────────────
+function PhoneMockup({ phoneSize }: { phoneSize: number }) {
+    return (
+        <Image
+            source={require('@/assets/images/phone_mockup.png')}
+            style={{ width: phoneSize, height: phoneSize * 2.05 }}
+            resizeMode="contain"
+        />
+    );
+}
 
 export default function HomeScreen() {
-
+    const router    = useRouter();
+    const { width } = useWindowDimensions();
+    const isDesktop = width >= DESKTOP_BP;
+    const phoneSize = isDesktop ? 280 : width * 0.52;
 
     return (
-        <ThemedView style={styles.container}>
-            <SafeAreaView style={styles.safeArea}>
-                <ThemedView style={styles.heroSection}>
-                    <AnimatedIcon/>
-                    <ThemedText type="title" style={styles.title}>
-                        <Link href={"/(tabs)/explore"}>
-                            <Text>Changed</Text>
-                        </Link>
-                    </ThemedText>
-                </ThemedView>
+        <ImageBackground
+            source={require('@/assets/images/backgrounds/background_index.png')}
+            resizeMode={"cover"}
+            style={[styles.bg]}
+        >
+            {/* Overlay sombre par-dessus l'image de fond */}
+            <View style={styles.overlay} />
 
-                <ThemedText type="code" style={styles.code}>
-                    get started
-                </ThemedText>
-
-                <ThemedView type="backgroundElement" style={styles.stepContainer}>
-                    <HintRow
-                        title="Try editing"
-                        hint={<ThemedText type="code">src/app/index.tsx</ThemedText>}
-                    />
-                    <HintRow title="Dev tools" hint={getDevMenuHint()}/>
-                    <HintRow
-                        title="Fresh start"
-                        hint={<ThemedText type="code">npm run reset-project</ThemedText>}
-                    />
-                </ThemedView>
-
-                {Platform.OS === 'web' && <WebBadge/>}
-            </SafeAreaView>
-        </ThemedView>
+            <View style={[
+                styles.content,
+                { paddingTop: TOPBAR_H + Spacing.lg },
+                isDesktop && styles.contentDesktop,
+            ]}>
+                {isDesktop ? (
+                    <>
+                        <HeroText style={{paddingBottom: "200"}} onPress={() => router.push('/scanner')} />
+                        <PhoneMockup phoneSize={phoneSize} />
+                    </>
+                ) : (
+                    <>
+                        <PhoneMockup phoneSize={phoneSize} />
+                        <HeroText onPress={() => router.push('/scanner')} />
+                    </>
+                )}
+            </View>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+
+    bg: {
         flex: 1,
+        backgroundColor: Colors.background,
+        width: '100%',
+        height: '100%',
+    },
+
+    overlay: {
+        ...StyleSheet.absoluteFillObject,
+        backgroundColor: 'rgba(0,0,0,0.45)',
+    },
+
+    // Mobile : colonne
+    content: {
+        flex: 1,
+        alignItems: 'center',
         justifyContent: 'center',
+        paddingHorizontal: Spacing.lg,
+        gap: Spacing.xl,
+        flexDirection: 'column',
+    },
+
+    // Desktop : ligne
+    contentDesktop: {
         flexDirection: 'row',
-    },
-    safeArea: {
-        flex: 1,
-        paddingHorizontal: Spacing.four,
+        justifyContent: 'space-evenly',
         alignItems: 'center',
-        gap: Spacing.three,
-        paddingBottom: BottomTabInset + Spacing.three,
-        maxWidth: MaxContentWidth,
+        paddingHorizontal: 60,
     },
-    heroSection: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-        paddingHorizontal: Spacing.four,
-        gap: Spacing.four,
+
+    // ── Texte hero ────────────────────────────────────────────────
+    heroText: {
+        alignItems: 'flex-start',
+        gap: Spacing.md,
+        maxWidth: 420,
+    },
+    badge: {
+        borderWidth: 1,
+        borderColor: 'rgba(201,168,76,0.5)',
+        borderRadius: 999,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.xs,
+        backgroundColor: 'rgba(201,168,76,0.08)',
+    },
+    badgeText: {
+        fontFamily: 'monospace',
+        fontSize: 11,
+        color: Colors.neonGold,
+        letterSpacing: 3,
     },
     title: {
-        textAlign: 'center',
+        fontSize: 38,
+        fontWeight: '800',
+        color: Colors.text,
+        lineHeight: 46,
     },
-    code: {
-        textTransform: 'uppercase',
+    titleAccent: {
+        color: Colors.neonPink,
     },
-    stepContainer: {
-        gap: Spacing.three,
-        alignSelf: 'stretch',
-        paddingHorizontal: Spacing.three,
-        paddingVertical: Spacing.four,
-        borderRadius: Spacing.four,
+    subtitle: {
+        fontSize: 15,
+        color: Colors.textDim,
+        lineHeight: 24,
+    },
+    ctaBtn: {
+        marginTop: Spacing.sm,
+        borderWidth: 1.5,
+        borderColor: Colors.neonGold,
+        borderRadius: 999,
+        paddingHorizontal: Spacing.xl,
+        paddingVertical: Spacing.md,
+        backgroundColor: 'rgba(201,168,76,0.08)',
+    },
+    ctaBtnPressed: {
+        backgroundColor: 'rgba(201,168,76,0.22)',
+    },
+    ctaText: {
+        fontFamily: 'monospace',
+        fontSize: 12,
+        fontWeight: '700',
+        color: Colors.text,
+        letterSpacing: 3,
     },
 });

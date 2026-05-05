@@ -1,32 +1,25 @@
-import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
+// src/app/(tabs)/_layout.tsx
+//
+// Déclare les écrans de la navigation par onglets.
+// tabBar={() => null = on cache la barre native d'Expo,
+// notre drawer custom dans app-tabs.web.tsx la remplace sur le web.
+
 import { Tabs } from 'expo-router';
 import React from 'react';
-import { useColorScheme } from 'react-native';
-
-import { AnimatedSplashOverlay } from '@/components/animated-icon';
 
 export default function TabLayout() {
-    const colorScheme = useColorScheme();
-
     return (
-        <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-            <AnimatedSplashOverlay />
-
-            <Tabs
-                // On cache la tabBar native d'Expo — on la remplace
-                // par notre drawer custom dans app-tabs.web.tsx
-                tabBar={() => null}
-                screenOptions={{ headerShown: false }}
-            >
-                {/* Chaque Tabs.Screen = une route déclarée */}
-                {/* En PHP : $router->add('/','index.php') */}
-                <Tabs.Screen name="index"   options={{ title: 'Accueil' }} />
-                <Tabs.Screen name="projets" options={{ title: 'Projets' }} />
-                <Tabs.Screen name="about"   options={{ title: 'À propos' }} />
-                <Tabs.Screen name="contact" options={{ title: 'Contact' }} />
-                <Tabs.Screen name="scanner" options={{ title: 'Vue AR' }} />
-            </Tabs>
-
-        </ThemeProvider>
+        <Tabs
+            tabBar={() => null}
+            screenOptions={{ headerShown: false }}
+        >
+            {/* Chaque Tabs.Screen = une route */}
+            {/* En PHP : $router->add('/accueil', AccueilController) */}
+            <Tabs.Screen name="index"   options={{ title: 'Accueil' }} />
+            <Tabs.Screen name="projets" options={{ title: 'Projets' }} />
+            <Tabs.Screen name="about"   options={{ title: 'À propos' }} />
+            <Tabs.Screen name="contact" options={{ title: 'Contact' }} />
+            <Tabs.Screen name="scanner" options={{ title: 'Vue AR' }} />
+        </Tabs>
     );
 }

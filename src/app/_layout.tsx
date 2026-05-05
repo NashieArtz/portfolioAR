@@ -1,29 +1,29 @@
 // src/app/_layout.tsx
-//
-// C'est le layout RACINE — il enveloppe toute l'application.
-// En PHP : c'est ton header.php/footer.php inclus sur toutes les pages.
-//
-// On place AppTabs ici pour qu'il soit visible sur toutes les pages,
-// peu importe l'écran affiché.
 
 import { Stack } from 'expo-router';
 import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
+import { Colors } from '@/constants/theme';
 import AppTabs from '@/components/app-tabs';
 
 export default function RootLayout() {
     return (
-        <>
-            {/* Le Stack gère la navigation entre les pages */}
-            {/* En PHP : c'est le router qui inclut le bon fichier */}
+        <View style={styles.root}>
             <Stack screenOptions={{ headerShown: false }}>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="(tabs)"  options={{ headerShown: false }} />
                 <Stack.Screen name="ar-view" options={{ headerShown: false }} />
             </Stack>
 
             {/* AppTabs s'affiche PAR-DESSUS toutes les pages */}
-            {/* En PHP : include 'nav.php'; à la fin du body */}
             <AppTabs />
-        </>
+        </View>
     );
 }
+
+const styles = StyleSheet.create({
+    root: {
+        flex: 1,
+        backgroundColor: Colors.background,
+    },
+});

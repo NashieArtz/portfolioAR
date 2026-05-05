@@ -7,5 +7,7 @@
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" name="aframe" level="application" />
     <orderEntry type="library" name="aframe-ar" level="application" />
+    <orderEntry type="library" name="ar.js" level="application" />
+    <orderEntry type="library" name="@c-frame/aframe-physics-system" level="application" />
   </component>
 </module>

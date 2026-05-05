@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Permissions-Policy" content="camera=*, microphone=*">
+    <script src="https://aframe.io/releases/1.3.0/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar.js"></script>
+    <style>
+        /* NOUVEAU DESIGN : Variables inspirées de index.tsx
+           Neon Gold: #C9A84C | Neon Pink: #E91E8C | Dark: #0A0A0F
+        */
+        :root {
+            --neon-gold: #C9A84C;
+            --neon-gold-bg: rgba(201, 168, 76, 0.08);
+            --neon-gold-hover: rgba(201, 168, 76, 0.22);
+            --neon-pink: #E91E8C;
+            --bg-dark: rgba(10, 10, 15, 0.95);
+            --text-main: #FFFFFF;
+            --text-dim: rgba(255, 255, 255, 0.6);
+        }
+
+        body, html { margin: 0; overflow: hidden; font-family: monospace; }
+
+        /* ── Boutons de Navigation (Gauche / Droite) ── */
+        .nav-btn {
+            display: none;
+            position: fixed;
+            bottom: 40px;
+            z-index: 200;
+            background: var(--neon-gold-bg);
+            color: var(--text-main);
+            border: 1.5px solid var(--neon-gold);
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 24px;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+        }
+        .nav-btn:active { background: var(--neon-gold-hover); }
+        #btn-prev { left: calc(50% - 100px); }
+        #btn-next { left: calc(50% + 44px); }
+
+        /* ── CORRECTION : Compteur déplacé en HAUT façon "Badge" ── */
+        #card-counter {
+            display: none;
+            position: fixed;
+            top: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: var(--neon-gold);
+            border: 1px solid rgba(201,168,76,0.5);
+            background: var(--neon-gold-bg);
+            padding: 6px 16px;
+            border-radius: 999px;
+            font-size: 12px;
+            letter-spacing: 3px;
+            z-index: 200;
+            backdrop-filter: blur(4px);
+        }
+
+        /* ── Bouton Flottant Principal (CTA) ── */
+        #floating-btn {
+            display: none;
+            position: fixed;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--neon-gold-bg);
+            color: var(--text-main);
+            border: 1.5px solid var(--neon-gold);
+            padding: 14px 28px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            z-index: 100;
+            cursor: pointer;
+            backdrop-filter: blur(4px);
+            text-transform: uppercase;
+        }
+        #floating-btn:active { background: var(--neon-gold-hover); }
+
+        /* ── Conteneur des actions (GitHub / Stack) ── */
+        .card-btns {
+            display: none;
+            position: fixed;
+            bottom: 116px; /* Reste en bas, ne chevauche plus le compteur */
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 200;
+            gap: 12px;
+            flex-direction: row;
+        }
+        .card-btns.visible { display: flex; }
+
+        .card-action-btn {
+            background: rgba(233, 30, 140, 0.08); /* Fond Pink */
+            color: var(--text-main);
+            border: 1.5px solid var(--neon-pink);
+            border-radius: 999px;
+            padding: 10px 20px;
+            font-size: 11px;
+            font-weight: 700;
+            cursor: pointer;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            backdrop-filter: blur(4px);
+        }
+        .card-action-btn:active { background: rgba(233, 30, 140, 0.22); }
+
+        /* ── Panneau de Technologies ── */
+        #tech-panel {
+            display: none;
+            position: fixed;
+            bottom: 170px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-dark);
+            border: 1px solid var(--neon-gold);
+            border-radius: 16px;
+            padding: 16px 24px;
+            z-index: 300;
+            min-width: 280px;
+            text-align: center;
+        }
+        #tech-panel h3 {
+            margin: 0 0 12px 0;
+            color: var(--neon-pink);
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+        #tech-panel .tags {
+            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+        }
+        #tech-panel .tag {
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 999px;
+            padding: 4px 12px;
+            font-size: 11px;
+        }
+        #tech-panel .close-tech {
+            margin-top: 14px;
+            display: block;
+            color: var(--text-dim);
+            font-size: 11px;
+            cursor: pointer;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+<button id="floating-btn" onclick="showCards()">Lancer l'expérience</button>
+
+<button class="nav-btn" id="btn-prev" onclick="prevCard()">‹</button>
+<button class="nav-btn" id="btn-next" onclick="nextCard()">›</button>
+<div id="card-counter">✦ 1 / 5</div>
+
+<div class="card-btns" id="card-btns">
+    <button class="card-action-btn" onclick="openGithub()">GitHub</button>
+    <button class="card-action-btn" onclick="toggleTech()">Stack</button>
+</div>
+
+<div id="tech-panel">
+    <h3 id="tech-title">Technologies</h3>
+    <div class="tags" id="tech-tags"></div>
+    <span class="close-tech" onclick="closeTech()">Fermer</span>
+</div>
+
+<a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
+    <a-assets>
+        <img id="img-crm"     src="/projects/proj_crm_1.png">
+        <img id="img-web4"    src="/projects/proj_web4_1.png">
+        <img id="img-mustcle" src="/projects/proj_mustcle_1.png">
+        <img id="img-hydro"   src="/projects/proj_hydrouqam.png">
+        <img id="img-tower"   src="/projects/proj_tower_2.png">
+    </a-assets>
+
+    <a-marker preset="hiro" id="main-marker">
+
+        <a-text value="Ange WU" position="0 0.2 -1.5"
+                rotation="-75 0 0" align="center" color="#FFFFFF" width="6"></a-text>
+        <a-text value="Developpeur Full-Stack" position="0 0.2 -1.1"
+                rotation="-75 0 0" align="center" color="#E91E8C" width="4"></a-text>
+
+        <a-entity id="cards-container" visible="false" position="0 0.2 0.5"
+                  animation="property: position; to: 0 0.3 0.5; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
+
+            <a-entity position="-14 0 0">
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-image src="#img-crm" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
+                <a-text value="CRM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
+                <a-text value="Gestion relation client" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+            </a-entity>
+
+            <a-entity position="-10.5 0 0">
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-image src="#img-web4" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
+                <a-text value="Web4Heroes" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
+                <a-text value="Application web heroique" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+            </a-entity>
+
+            <a-entity position="-7 0 0">
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-image src="#img-mustcle" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
+                <a-text value="MUSTcle" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
+                <a-text value="App fitness personnalisee" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+            </a-entity>
+
+            <a-entity position="-3.5 0 0">
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-image src="#img-hydro" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
+                <a-text value="Hydro UQAM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
+                <a-text value="Gestion hydraulique UQAM" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+            </a-entity>
+
+            <a-entity position="0 0 0">
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-image src="#img-tower" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
+                <a-text value="Tower Defense" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
+                <a-text value="Jeu de strategie temps reel" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+            </a-entity>
+
+        </a-entity>
+    </a-marker>
+    <a-entity camera></a-entity>
+</a-scene>
+
+<script>
+    const TOTAL_CARDS = 5;
+    let currentCard = 0;
+    let cardsVisible = false;
+    let techOpen = false;
+
+    const cardStartX = [-14, -10.5, -7, -3.5, 0];
+
+    const cardData = [
+        { github: 'https://github.com/NashieArtz/crm', tech: ['React.js', 'Laravel', 'PostgreSQL', 'TailWind'] },
+        { github: 'https://github.com/NashieArtz/web4heroes', tech: ['MVC', 'PHP', 'JS', 'MySQL'] },
+        { github: '#', tech: ['Wordpress'] },
+        { github: 'https://github.com/NashieArtz/hydrouqam', tech: ['Assembleur'] },
+        { github: 'https://github.com/NashieArtz/tours-de-defense', tech: ['Java'] }
+    ];
+
+    function showCards() {
+        cardsVisible = true;
+        document.getElementById('cards-container').setAttribute('visible', 'true');
+        document.getElementById('floating-btn').style.display = 'none';
+        document.getElementById('btn-prev').style.display = 'block';
+        document.getElementById('btn-next').style.display = 'block';
+        document.getElementById('card-counter').style.display = 'block';
+        document.getElementById('card-btns').classList.add('visible');
+        updateCounter();
+        goToCard(0);
+    }
+
+    function goToCard(index) {
+        currentCard = index;
+        techOpen = false;
+        document.getElementById('tech-panel').style.display = 'none';
+        const container = document.getElementById('cards-container');
+
+        container.setAttribute('animation__slide', {
+            property: 'position',
+            to: `${-cardStartX[index]} 0.2 0.5`,
+            dur: 500,
+            easing: 'easeOutExpo'
+        });
+
+        updateCounter();
+        updateBtns();
+    }
+
+    function nextCard() {
+        if (currentCard < TOTAL_CARDS - 1) goToCard(currentCard + 1);
+    }
+
+    function prevCard() {
+        if (currentCard > 0) goToCard(currentCard - 1);
+    }
+
+    function updateCounter() {
+        document.getElementById('card-counter').textContent = `✦ ${currentCard + 1} / ${TOTAL_CARDS}`;
+    }
+
+    function updateBtns() {
+        document.getElementById('btn-prev').style.opacity = currentCard === 0 ? '0.3' : '1';
+        document.getElementById('btn-next').style.opacity = currentCard === TOTAL_CARDS - 1 ? '0.3' : '1';
+    }
+
+    function openGithub() {
+        window.open(cardData[currentCard].github, '_blank');
+    }
+
+    function toggleTech() {
+        if (techOpen) {
+            closeTech();
+        } else {
+            const data = cardData[currentCard];
+            document.getElementById('tech-tags').innerHTML =
+                data.tech.map(t => `<span class="tag">${t}</span>`).join('');
+            document.getElementById('tech-panel').style.display = 'block';
+            techOpen = true;
+        }
+    }
+
+    function closeTech() {
+        document.getElementById('tech-panel').style.display = 'none';
+        techOpen = false;
+    }
+
+    function hideAllUI() {
+        document.getElementById('floating-btn').style.display = 'none';
+        document.getElementById('btn-prev').style.display = 'none';
+        document.getElementById('btn-next').style.display = 'none';
+        document.getElementById('card-counter').style.display = 'none';
+        document.getElementById('card-btns').classList.remove('visible');
+        document.getElementById('tech-panel').style.display = 'none';
+    }
+
+    document.querySelector('a-scene').addEventListener('loaded', () => {
+        document.querySelector('#main-marker').addEventListener('markerFound', () => {
+            if (!cardsVisible) {
+                document.getElementById('floating-btn').style.display = 'block';
+            } else {
+                document.getElementById('btn-prev').style.display = 'block';
+                document.getElementById('btn-next').style.display = 'block';
+                document.getElementById('card-counter').style.display = 'block';
+                document.getElementById('card-btns').classList.add('visible');
+            }
+        });
+
+        document.querySelector('#main-marker').addEventListener('markerLost', () => {
+            hideAllUI();
+        });
+    });
+</script>
+
+</body>
+</html>

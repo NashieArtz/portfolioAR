@@ -1,25 +1,29 @@
-import { Text, View, StyleSheet } from 'react-native';
+import React from 'react';
+import { Platform } from 'react-native';
+import { WebView } from 'react-native-webview';
 
-const contentHTML =
-    '<!DOCTYPE html><html lang="en"> <head> <meta charset="UTF-8"> <title>Title</title> </head><body> <a-marker type="pattern"/></body></html>';
+const AR_URL = 'https://cbhorfe-nashie_artz-8081.exp.direct/ar.html';
 
 export default function ArView() {
-    return (
-        <View>
+    React.useEffect(() => {
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
+            window.location.href = '/ar.html';
+        }
+    }, []);
 
-        </View>
+    if (Platform.OS === 'web') return null;
+
+    return (
+        <WebView
+            source={{ uri: AR_URL }}
+            style={{ flex: 1 }}
+            mediaPlaybackRequiresUserAction={false}
+            allowsInlineMediaPlayback
+            javaScriptEnabled
+            domStorageEnabled
+            originWhitelist={['*']}
+            androidLayerType="hardware"
+            onPermissionRequest={(request: any) => request.grant(request.resources)}
+        />
     );
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#25292e',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    text: {
-        color: '#fff',
-    },
-});
-

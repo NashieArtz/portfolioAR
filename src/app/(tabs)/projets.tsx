@@ -1,4 +1,3 @@
-// src/app/(tabs)/projets.tsx
 import { StyleSheet, View } from 'react-native';
 import { Colors } from '@/constants/theme';
 

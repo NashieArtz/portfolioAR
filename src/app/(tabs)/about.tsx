@@ -1,9 +1,3 @@
-// src/app/(tabs)/about.tsx
-//
-// Page "À propos" — 4 slides horizontales
-// Navigation : boutons < > sur desktop, swipe sur mobile
-// Slides : Intro, Compétences, Parcours, CV
-
 import { useRef, useState } from 'react';
 import {
     Dimensions,
@@ -23,8 +17,6 @@ import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 const TOPBAR_H   = 56;
 const DESKTOP_BP = 768;
 
-// ─── Données des slides ──────────────────────────────────────────────────────
-// En PHP : $slides = [['titre' => '...', 'contenu' => '...'], ...]
 const SLIDES = [
     {
         id: 1,
@@ -33,7 +25,7 @@ const SLIDES = [
         body: 'Je suis un développeur web et mobile spécialisé dans les expériences immersives. Fasciné par la réalité augmentée depuis mes débuts, je crée des interfaces qui brouillent la frontière entre le numérique et le réel.',
         accent: Colors.neonPink,
         number: '01',
-        visual: 'avatar', // type de visuel à droite
+        visual: 'avatar',
     },
     {
         id: 2,
@@ -64,7 +56,6 @@ const SLIDES = [
     },
 ];
 
-// Compétences pour le slide 2
 const SKILLS = [
     { label: 'React Native',  level: 85 },
     { label: 'A-Frame / AR',  level: 78 },
@@ -74,7 +65,6 @@ const SKILLS = [
     { label: 'UI/UX Design',  level: 72 },
 ];
 
-// Timeline pour le slide 3
 const TIMELINE = [
     { year: '2024', role: 'Développeur AR freelance',    desc: 'Création de portfolios immersifs en réalité augmentée.' },
     { year: '2022', role: 'Lead Front-end',              desc: 'Direction technique front chez une agence digitale parisienne.' },
@@ -82,22 +72,14 @@ const TIMELINE = [
     { year: '2018', role: 'Formation développement web', desc: 'Spécialisation en développement web et interfaces interactives.' },
 ];
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// VISUELS DE DROITE — chaque slide a un visuel différent
-// ═══════════════════════════════════════════════════════════════════════════
-
-// Slide 1 : Avatar / présentation
 function VisualAvatar({ accent }: { accent: string }) {
     return (
         <View style={visStyles.avatarWrapper}>
-            {/* Cadre décoratif */}
             <View style={[visStyles.avatarFrame, { borderColor: accent }]}>
                 <View style={[visStyles.avatarInner, { backgroundColor: `${accent}15` }]}>
                     <Text style={[visStyles.avatarEmoji]}>👨‍💻</Text>
                 </View>
             </View>
-            {/* Badge flottant */}
             <View style={[visStyles.badge, { backgroundColor: `${accent}20`, borderColor: `${accent}50` }]}>
                 <Text style={[visStyles.badgeText, { color: accent }]}>AR Developer</Text>
             </View>
@@ -105,7 +87,6 @@ function VisualAvatar({ accent }: { accent: string }) {
     );
 }
 
-// Slide 2 : Barres de compétences
 function VisualSkills({ accent }: { accent: string }) {
     return (
         <View style={visStyles.skillsWrapper}>
@@ -125,13 +106,11 @@ function VisualSkills({ accent }: { accent: string }) {
     );
 }
 
-// Slide 3 : Timeline verticale
 function VisualTimeline({ accent }: { accent: string }) {
     return (
         <View style={visStyles.timelineWrapper}>
             {TIMELINE.map((item, i) => (
                 <View key={i} style={visStyles.timelineItem}>
-                    {/* Ligne verticale + point */}
                     <View style={visStyles.timelineLine}>
                         <View style={[visStyles.timelineDot, { backgroundColor: accent }]} />
                         {i < TIMELINE.length - 1 && (
@@ -149,14 +128,12 @@ function VisualTimeline({ accent }: { accent: string }) {
     );
 }
 
-// Slide 4 : CV
 function VisualCV({ accent }: { accent: string }) {
     return (
         <View style={visStyles.cvWrapper}>
-            {/* Aperçu document */}
             <View style={[visStyles.cvDoc, { borderColor: `${accent}30` }]}>
                 <View style={[visStyles.cvHeader, { backgroundColor: `${accent}15` }]}>
-                    <Text style={[visStyles.cvName, { color: accent }]}>VOTRE NOM</Text>
+                    <Text style={[visStyles.cvName, { color: accent }]}>Lilian Dasques</Text>
                     <Text style={visStyles.cvJob}>AR Developer & Designer</Text>
                 </View>
                 {[1,2,3].map(i => (
@@ -165,7 +142,6 @@ function VisualCV({ accent }: { accent: string }) {
                     </View>
                 ))}
             </View>
-            {/* Bouton télécharger */}
             <Pressable style={[visStyles.downloadBtn, { borderColor: accent }]}>
                 <Text style={[visStyles.downloadText, { color: accent }]}>↓  TÉLÉCHARGER LE CV</Text>
             </Pressable>
@@ -173,7 +149,6 @@ function VisualCV({ accent }: { accent: string }) {
     );
 }
 
-// Sélecteur de visuel selon le type
 function SlideVisual({ type, accent }: { type: string; accent: string }) {
     switch (type) {
         case 'skills':   return <VisualSkills   accent={accent} />;
@@ -183,26 +158,16 @@ function SlideVisual({ type, accent }: { type: string; accent: string }) {
     }
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// COMPOSANT : Une slide
-// ═══════════════════════════════════════════════════════════════════════════
 function Slide({ slide, width }: { slide: typeof SLIDES[0]; width: number }) {
     const isDesktop = width >= DESKTOP_BP;
 
     return (
-        // Chaque slide fait exactement la largeur de l'écran
-        // = position: absolute; width: 100vw en CSS
         <View style={[styles.slide, { width }]}>
-
-            {/* Numéro en filigrane */}
             <Text style={[styles.slideNumber, { color: `${slide.accent}15` }]}>
                 {slide.number}
             </Text>
 
             <View style={[styles.slideInner, isDesktop && styles.slideInnerDesktop]}>
-
-                {/* ── Colonne gauche : texte ── */}
                 <View style={styles.slideLeft}>
                     <View style={[styles.tag, { borderColor: `${slide.accent}50`, backgroundColor: `${slide.accent}10` }]}>
                         <Text style={[styles.tagText, { color: slide.accent }]}>{slide.tag}</Text>
@@ -211,43 +176,30 @@ function Slide({ slide, width }: { slide: typeof SLIDES[0]; width: number }) {
                     <Text style={styles.slideTitle}>{slide.title}</Text>
                     <Text style={styles.slideBody}>{slide.body}</Text>
 
-                    {/* Ligne décorative */}
                     <View style={[styles.accentLine, { backgroundColor: slide.accent }]} />
                 </View>
 
-                {/* ── Colonne droite : visuel ── */}
                 <View style={styles.slideRight}>
                     <SlideVisual type={slide.visual} accent={slide.accent} />
                 </View>
-
             </View>
         </View>
     );
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// COMPOSANT RACINE : AboutScreen
-// ═══════════════════════════════════════════════════════════════════════════
 export default function AboutScreen() {
     const { width }  = useWindowDimensions();
     const isDesktop  = width >= DESKTOP_BP;
     const [current, setCurrent] = useState(0);
 
-    // Référence au ScrollView pour le contrôler depuis les boutons
-    // En PHP : pas d'équivalent — c'est du DOM manipulation côté client
     const scrollRef = useRef<ScrollView>(null);
 
-    // Va vers un slide spécifique
-    // En PHP : header('Location: ?slide=2') mais sans rechargement
     const goTo = (index: number) => {
         const clamped = Math.max(0, Math.min(index, SLIDES.length - 1));
         setCurrent(clamped);
         scrollRef.current?.scrollTo({ x: clamped * width, animated: true });
     };
 
-    // Détecte le slide actuel quand l'utilisateur swipe
-    // Déclenché à chaque fin de scroll
     const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         const index = Math.round(e.nativeEvent.contentOffset.x / width);
         setCurrent(index);
@@ -255,10 +207,6 @@ export default function AboutScreen() {
 
     return (
         <View style={[styles.container, { paddingTop: TOPBAR_H }]}>
-
-            {/* ── Slides scrollables horizontalement ── */}
-            {/* pagingEnabled = scroll "magnétique" qui snap sur chaque slide */}
-            {/* = scroll-snap-type: x mandatory en CSS */}
             <ScrollView
                 ref={scrollRef}
                 horizontal
@@ -276,10 +224,7 @@ export default function AboutScreen() {
                 ))}
             </ScrollView>
 
-            {/* ── Bas de page : dots + boutons desktop ── */}
             <View style={styles.footer}>
-
-                {/* Bouton précédent — desktop uniquement */}
                 {isDesktop && (
                     <Pressable
                         onPress={() => goTo(current - 1)}
@@ -290,7 +235,6 @@ export default function AboutScreen() {
                     </Pressable>
                 )}
 
-                {/* Dots indicateurs */}
                 <View style={styles.dots}>
                     {SLIDES.map((slide, i) => (
                         <Pressable key={i} onPress={() => goTo(i)}>
@@ -303,12 +247,10 @@ export default function AboutScreen() {
                     ))}
                 </View>
 
-                {/* Label "Faites glisser" sur mobile */}
                 {!isDesktop && (
                     <Text style={styles.swipeHint}>Faites glisser pour naviguer</Text>
                 )}
 
-                {/* Bouton suivant — desktop uniquement */}
                 {isDesktop && (
                     <Pressable
                         onPress={() => goTo(current + 1)}
@@ -318,10 +260,8 @@ export default function AboutScreen() {
                         <Text style={styles.navBtnText}>›</Text>
                     </Pressable>
                 )}
-
             </View>
 
-            {/* Boutons flottants gauche/droite — desktop uniquement, style maquette */}
             {isDesktop && (
                 <>
                     <Pressable
@@ -340,22 +280,15 @@ export default function AboutScreen() {
                     </Pressable>
                 </>
             )}
-
         </View>
     );
 }
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES PRINCIPAUX
-// ═══════════════════════════════════════════════════════════════════════════
 const styles = StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: Colors.background,
     },
-
-    // ── Slide ─────────────────────────────────────────────────────
     slide: {
         flex: 1,
         justifyContent: 'center',
@@ -384,8 +317,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingHorizontal: Spacing.xxl,
     },
-
-    // ── Colonne gauche ────────────────────────────────────────────
     slideLeft: {
         flex: 1,
         gap: Spacing.md,
@@ -422,15 +353,11 @@ const styles = StyleSheet.create({
         borderRadius: 2,
         marginTop: Spacing.sm,
     },
-
-    // ── Colonne droite ────────────────────────────────────────────
     slideRight: {
         flex: 1,
         alignItems: 'center',
         justifyContent: 'center',
     },
-
-    // ── Footer ────────────────────────────────────────────────────
     footer: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -461,8 +388,6 @@ const styles = StyleSheet.create({
         color: Colors.textDisabled,
         letterSpacing: 1,
     },
-
-    // Boutons nav footer (desktop)
     navBtn: {
         width: 36, height: 36,
         borderRadius: 18,
@@ -477,8 +402,6 @@ const styles = StyleSheet.create({
         fontSize: 20,
         lineHeight: 22,
     },
-
-    // Boutons flottants gauche/droite (desktop, style maquette)
     floatBtn: {
         position: 'absolute',
         top: '50%' as any,
@@ -494,8 +417,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.4,
         shadowRadius: 12,
     },
-    floatBtnLeft:     { left: 12 },
-    floatBtnRight:    { right: 12 },
+    floatBtnLeft: { left: 12 },
+    floatBtnRight: { right: 12 },
     floatBtnDisabled: { opacity: 0.3 },
     floatBtnText: {
         color: Colors.background,
@@ -505,13 +428,7 @@ const styles = StyleSheet.create({
     },
 });
 
-
-// ═══════════════════════════════════════════════════════════════════════════
-// STYLES DES VISUELS
-// ═══════════════════════════════════════════════════════════════════════════
 const visStyles = StyleSheet.create({
-
-    // ── Avatar ────────────────────────────────────────────────────
     avatarWrapper: {
         alignItems: 'center',
         justifyContent: 'center',
@@ -544,8 +461,6 @@ const visStyles = StyleSheet.create({
         fontSize: 12,
         letterSpacing: 2,
     },
-
-    // ── Skills ────────────────────────────────────────────────────
     skillsWrapper: {
         width: '100%',
         maxWidth: 380,
@@ -579,8 +494,6 @@ const visStyles = StyleSheet.create({
         width: 36,
         textAlign: 'right',
     },
-
-    // ── Timeline ──────────────────────────────────────────────────
     timelineWrapper: {
         width: '100%',
         maxWidth: 380,
@@ -626,8 +539,6 @@ const visStyles = StyleSheet.create({
         color: Colors.textDim,
         lineHeight: 18,
     },
-
-    // ── CV ────────────────────────────────────────────────────────
     cvWrapper: {
         alignItems: 'center',
         gap: Spacing.lg,

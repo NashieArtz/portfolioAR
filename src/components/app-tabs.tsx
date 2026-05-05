@@ -1,30 +1,56 @@
-import {NativeTabs} from 'expo-router/unstable-native-tabs';
-import React from 'react';
-import {useColorScheme} from 'react-native';
+// src/components/app-tabs.tsx
+//
+// Chargé sur iOS et Android natif uniquement.
+// Sur le web, c'est app-tabs.web.tsx qui prend le relais (convention Expo).
 
-import {Colors} from '@/constants/theme';
+import { NativeTabs } from 'expo-router/unstable-native-tabs';
+import React from 'react';
+
+import { Colors } from '@/constants/theme';
 
 export default function AppTabs() {
-    const scheme = useColorScheme();
-    const colors = Colors[scheme === 'unspecified' ? 'light' : scheme];
-
     return (
         <NativeTabs
-            backgroundColor={colors.background}
-            indicatorColor={colors.backgroundElement}
-            labelStyle={{selected: {color: colors.text}}}>
+            backgroundColor={Colors.background}
+            indicatorColor={Colors.neonPink}
+            labelStyle={{ selected: { color: Colors.text } }}
+        >
             <NativeTabs.Trigger name="index">
-                <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Label>Accueil</NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
                     src={require('@/assets/images/tabIcons/home.png')}
                     renderingMode="template"
                 />
             </NativeTabs.Trigger>
 
-            <NativeTabs.Trigger name="explore">
-                <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+            <NativeTabs.Trigger name="projets">
+                <NativeTabs.Trigger.Label>Projets</NativeTabs.Trigger.Label>
                 <NativeTabs.Trigger.Icon
-                    src={require('@/assets/images/tabIcons/explore.png')}
+                    src={require('@/assets/images/tabIcons/home.png')}
+                    renderingMode="template"
+                />
+            </NativeTabs.Trigger>
+
+            <NativeTabs.Trigger name="about">
+                <NativeTabs.Trigger.Label>À propos</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Icon
+                    src={require('@/assets/images/tabIcons/home.png')}
+                    renderingMode="template"
+                />
+            </NativeTabs.Trigger>
+
+            <NativeTabs.Trigger name="contact">
+                <NativeTabs.Trigger.Label>Contact</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Icon
+                    src={require('@/assets/images/tabIcons/home.png')}
+                    renderingMode="template"
+                />
+            </NativeTabs.Trigger>
+
+            <NativeTabs.Trigger name="scanner">
+                <NativeTabs.Trigger.Label>Vue AR</NativeTabs.Trigger.Label>
+                <NativeTabs.Trigger.Icon
+                    src={require('@/assets/images/tabIcons/home.png')}
                     renderingMode="template"
                 />
             </NativeTabs.Trigger>

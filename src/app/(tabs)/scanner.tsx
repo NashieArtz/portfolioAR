@@ -1,34 +1,11 @@
-import {View, Text, Pressable, StyleSheet} from 'react-native';
-import {useRouter} from 'expo-router';
+// src/app/(tabs)/scanner.tsx
+import { StyleSheet, View } from 'react-native';
+import { Colors } from '@/constants/theme';
 
-export default function Scanner() {
-
-    const router = useRouter();
-
-    return (
-        <View style={styles.container}>
-            <Text style={styles.title}>Mon CV</Text>
-
-            <Pressable style={styles.button}
-                       onPress={() => router.navigate('/ar-view')}>
-                <Text style={styles.buttonText}>Voir en AR</Text>
-            </Pressable>
-        </View>
-    );
+export default function ScannerScreen() {
+    return <View style={styles.container} />;
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-    },
-    title: {
-
-    },
-    button: {
-
-    },
-    buttonText: {
-
-    },
-
-})
+    container: { flex: 1, backgroundColor: Colors.background },
+});

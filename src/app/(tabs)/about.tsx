@@ -1,11 +1,681 @@
 // src/app/(tabs)/about.tsx
-import { StyleSheet, View } from 'react-native';
-import { Colors } from '@/constants/theme';
+//
+// Page "À propos" — 4 slides horizontales
+// Navigation : boutons < > sur desktop, swipe sur mobile
+// Slides : Intro, Compétences, Parcours, CV
 
-export default function AboutScreen() {
-    return <View style={styles.container} />;
+import { useRef, useState } from 'react';
+import {
+    Dimensions,
+    Image,
+    NativeScrollEvent,
+    NativeSyntheticEvent,
+    Pressable,
+    ScrollView,
+    StyleSheet,
+    Text,
+    useWindowDimensions,
+    View,
+} from 'react-native';
+
+import { Colors, Spacing, BorderRadius } from '@/constants/theme';
+
+const TOPBAR_H   = 56;
+const DESKTOP_BP = 768;
+
+// ─── Données des slides ──────────────────────────────────────────────────────
+// En PHP : $slides = [['titre' => '...', 'contenu' => '...'], ...]
+const SLIDES = [
+    {
+        id: 1,
+        tag: 'Qui je suis',
+        title: 'Développeur\npassionné par\nl\'expérience AR',
+        body: 'Je suis un développeur web et mobile spécialisé dans les expériences immersives. Fasciné par la réalité augmentée depuis mes débuts, je crée des interfaces qui brouillent la frontière entre le numérique et le réel.',
+        accent: Colors.neonPink,
+        number: '01',
+        visual: 'avatar', // type de visuel à droite
+    },
+    {
+        id: 2,
+        tag: 'Compétences',
+        title: 'Stack technique\net expertise',
+        body: 'Du front-end au mobile en passant par la 3D web, je maîtrise un large spectre d\'outils modernes pour créer des expériences uniques.',
+        accent: Colors.neonGold,
+        number: '02',
+        visual: 'skills',
+    },
+    {
+        id: 3,
+        tag: 'Parcours',
+        title: 'Mon chemin\njusqu\'ici',
+        body: 'Un parcours atypique entre agences créatives, projets freelance et expérimentations personnelles — chaque étape a forgé ma vision du web immersif.',
+        accent: Colors.neonBlue,
+        number: '03',
+        visual: 'timeline',
+    },
+    {
+        id: 4,
+        tag: 'CV',
+        title: 'Curriculum\nVitae',
+        body: 'Retrouvez l\'ensemble de mon expérience professionnelle, mes formations et mes certifications dans mon CV complet.',
+        accent: Colors.neonPink,
+        number: '04',
+        visual: 'cv',
+    },
+];
+
+// Compétences pour le slide 2
+const SKILLS = [
+    { label: 'React Native',  level: 85 },
+    { label: 'A-Frame / AR',  level: 78 },
+    { label: 'TypeScript',    level: 80 },
+    { label: 'Three.js',      level: 65 },
+    { label: 'PHP / Laravel', level: 90 },
+    { label: 'UI/UX Design',  level: 72 },
+];
+
+// Timeline pour le slide 3
+const TIMELINE = [
+    { year: '2024', role: 'Développeur AR freelance',    desc: 'Création de portfolios immersifs en réalité augmentée.' },
+    { year: '2022', role: 'Lead Front-end',              desc: 'Direction technique front chez une agence digitale parisienne.' },
+    { year: '2020', role: 'Développeur full-stack',      desc: 'Conception d\'applications web et mobile pour des startups.' },
+    { year: '2018', role: 'Formation développement web', desc: 'Spécialisation en développement web et interfaces interactives.' },
+];
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// VISUELS DE DROITE — chaque slide a un visuel différent
+// ═══════════════════════════════════════════════════════════════════════════
+
+// Slide 1 : Avatar / présentation
+function VisualAvatar({ accent }: { accent: string }) {
+    return (
+        <View style={visStyles.avatarWrapper}>
+            {/* Cadre décoratif */}
+            <View style={[visStyles.avatarFrame, { borderColor: accent }]}>
+                <View style={[visStyles.avatarInner, { backgroundColor: `${accent}15` }]}>
+                    <Text style={[visStyles.avatarEmoji]}>👨‍💻</Text>
+                </View>
+            </View>
+            {/* Badge flottant */}
+            <View style={[visStyles.badge, { backgroundColor: `${accent}20`, borderColor: `${accent}50` }]}>
+                <Text style={[visStyles.badgeText, { color: accent }]}>AR Developer</Text>
+            </View>
+        </View>
+    );
 }
 
+// Slide 2 : Barres de compétences
+function VisualSkills({ accent }: { accent: string }) {
+    return (
+        <View style={visStyles.skillsWrapper}>
+            {SKILLS.map((skill, i) => (
+                <View key={i} style={visStyles.skillRow}>
+                    <Text style={visStyles.skillLabel}>{skill.label}</Text>
+                    <View style={visStyles.skillBarBg}>
+                        <View style={[
+                            visStyles.skillBarFill,
+                            { width: `${skill.level}%` as any, backgroundColor: accent },
+                        ]} />
+                    </View>
+                    <Text style={[visStyles.skillPct, { color: accent }]}>{skill.level}%</Text>
+                </View>
+            ))}
+        </View>
+    );
+}
+
+// Slide 3 : Timeline verticale
+function VisualTimeline({ accent }: { accent: string }) {
+    return (
+        <View style={visStyles.timelineWrapper}>
+            {TIMELINE.map((item, i) => (
+                <View key={i} style={visStyles.timelineItem}>
+                    {/* Ligne verticale + point */}
+                    <View style={visStyles.timelineLine}>
+                        <View style={[visStyles.timelineDot, { backgroundColor: accent }]} />
+                        {i < TIMELINE.length - 1 && (
+                            <View style={[visStyles.timelineConnector, { backgroundColor: `${accent}30` }]} />
+                        )}
+                    </View>
+                    <View style={visStyles.timelineContent}>
+                        <Text style={[visStyles.timelineYear, { color: accent }]}>{item.year}</Text>
+                        <Text style={visStyles.timelineRole}>{item.role}</Text>
+                        <Text style={visStyles.timelineDesc}>{item.desc}</Text>
+                    </View>
+                </View>
+            ))}
+        </View>
+    );
+}
+
+// Slide 4 : CV
+function VisualCV({ accent }: { accent: string }) {
+    return (
+        <View style={visStyles.cvWrapper}>
+            {/* Aperçu document */}
+            <View style={[visStyles.cvDoc, { borderColor: `${accent}30` }]}>
+                <View style={[visStyles.cvHeader, { backgroundColor: `${accent}15` }]}>
+                    <Text style={[visStyles.cvName, { color: accent }]}>VOTRE NOM</Text>
+                    <Text style={visStyles.cvJob}>AR Developer & Designer</Text>
+                </View>
+                {[1,2,3].map(i => (
+                    <View key={i} style={visStyles.cvLine}>
+                        <View style={[visStyles.cvLineBar, { width: `${85 - i * 15}%` as any, backgroundColor: `${accent}25` }]} />
+                    </View>
+                ))}
+            </View>
+            {/* Bouton télécharger */}
+            <Pressable style={[visStyles.downloadBtn, { borderColor: accent }]}>
+                <Text style={[visStyles.downloadText, { color: accent }]}>↓  TÉLÉCHARGER LE CV</Text>
+            </Pressable>
+        </View>
+    );
+}
+
+// Sélecteur de visuel selon le type
+function SlideVisual({ type, accent }: { type: string; accent: string }) {
+    switch (type) {
+        case 'skills':   return <VisualSkills   accent={accent} />;
+        case 'timeline': return <VisualTimeline accent={accent} />;
+        case 'cv':       return <VisualCV       accent={accent} />;
+        default:         return <VisualAvatar   accent={accent} />;
+    }
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPOSANT : Une slide
+// ═══════════════════════════════════════════════════════════════════════════
+function Slide({ slide, width }: { slide: typeof SLIDES[0]; width: number }) {
+    const isDesktop = width >= DESKTOP_BP;
+
+    return (
+        // Chaque slide fait exactement la largeur de l'écran
+        // = position: absolute; width: 100vw en CSS
+        <View style={[styles.slide, { width }]}>
+
+            {/* Numéro en filigrane */}
+            <Text style={[styles.slideNumber, { color: `${slide.accent}15` }]}>
+                {slide.number}
+            </Text>
+
+            <View style={[styles.slideInner, isDesktop && styles.slideInnerDesktop]}>
+
+                {/* ── Colonne gauche : texte ── */}
+                <View style={styles.slideLeft}>
+                    <View style={[styles.tag, { borderColor: `${slide.accent}50`, backgroundColor: `${slide.accent}10` }]}>
+                        <Text style={[styles.tagText, { color: slide.accent }]}>{slide.tag}</Text>
+                    </View>
+
+                    <Text style={styles.slideTitle}>{slide.title}</Text>
+                    <Text style={styles.slideBody}>{slide.body}</Text>
+
+                    {/* Ligne décorative */}
+                    <View style={[styles.accentLine, { backgroundColor: slide.accent }]} />
+                </View>
+
+                {/* ── Colonne droite : visuel ── */}
+                <View style={styles.slideRight}>
+                    <SlideVisual type={slide.visual} accent={slide.accent} />
+                </View>
+
+            </View>
+        </View>
+    );
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// COMPOSANT RACINE : AboutScreen
+// ═══════════════════════════════════════════════════════════════════════════
+export default function AboutScreen() {
+    const { width }  = useWindowDimensions();
+    const isDesktop  = width >= DESKTOP_BP;
+    const [current, setCurrent] = useState(0);
+
+    // Référence au ScrollView pour le contrôler depuis les boutons
+    // En PHP : pas d'équivalent — c'est du DOM manipulation côté client
+    const scrollRef = useRef<ScrollView>(null);
+
+    // Va vers un slide spécifique
+    // En PHP : header('Location: ?slide=2') mais sans rechargement
+    const goTo = (index: number) => {
+        const clamped = Math.max(0, Math.min(index, SLIDES.length - 1));
+        setCurrent(clamped);
+        scrollRef.current?.scrollTo({ x: clamped * width, animated: true });
+    };
+
+    // Détecte le slide actuel quand l'utilisateur swipe
+    // Déclenché à chaque fin de scroll
+    const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
+        const index = Math.round(e.nativeEvent.contentOffset.x / width);
+        setCurrent(index);
+    };
+
+    return (
+        <View style={[styles.container, { paddingTop: TOPBAR_H }]}>
+
+            {/* ── Slides scrollables horizontalement ── */}
+            {/* pagingEnabled = scroll "magnétique" qui snap sur chaque slide */}
+            {/* = scroll-snap-type: x mandatory en CSS */}
+            <ScrollView
+                ref={scrollRef}
+                horizontal
+                pagingEnabled
+                showsHorizontalScrollIndicator={false}
+                onScroll={(e) => {
+                    const index = Math.round(e.nativeEvent.contentOffset.x / width);
+                    if (index !== current) setCurrent(index);
+                }}
+                scrollEventThrottle={16}
+                style={{ flex: 1 }}
+            >
+                {SLIDES.map(slide => (
+                    <Slide key={slide.id} slide={slide} width={width} />
+                ))}
+            </ScrollView>
+
+            {/* ── Bas de page : dots + boutons desktop ── */}
+            <View style={styles.footer}>
+
+                {/* Bouton précédent — desktop uniquement */}
+                {isDesktop && (
+                    <Pressable
+                        onPress={() => goTo(current - 1)}
+                        style={[styles.navBtn, current === 0 && styles.navBtnDisabled]}
+                        disabled={current === 0}
+                    >
+                        <Text style={styles.navBtnText}>‹</Text>
+                    </Pressable>
+                )}
+
+                {/* Dots indicateurs */}
+                <View style={styles.dots}>
+                    {SLIDES.map((slide, i) => (
+                        <Pressable key={i} onPress={() => goTo(i)}>
+                            <View style={[
+                                styles.dot,
+                                i === current && styles.dotActive,
+                                i === current && { backgroundColor: SLIDES[current].accent },
+                            ]} />
+                        </Pressable>
+                    ))}
+                </View>
+
+                {/* Label "Faites glisser" sur mobile */}
+                {!isDesktop && (
+                    <Text style={styles.swipeHint}>Faites glisser pour naviguer</Text>
+                )}
+
+                {/* Bouton suivant — desktop uniquement */}
+                {isDesktop && (
+                    <Pressable
+                        onPress={() => goTo(current + 1)}
+                        style={[styles.navBtn, current === SLIDES.length - 1 && styles.navBtnDisabled]}
+                        disabled={current === SLIDES.length - 1}
+                    >
+                        <Text style={styles.navBtnText}>›</Text>
+                    </Pressable>
+                )}
+
+            </View>
+
+            {/* Boutons flottants gauche/droite — desktop uniquement, style maquette */}
+            {isDesktop && (
+                <>
+                    <Pressable
+                        style={[styles.floatBtn, styles.floatBtnLeft, current === 0 && styles.floatBtnDisabled]}
+                        onPress={() => goTo(current - 1)}
+                        disabled={current === 0}
+                    >
+                        <Text style={styles.floatBtnText}>‹</Text>
+                    </Pressable>
+                    <Pressable
+                        style={[styles.floatBtn, styles.floatBtnRight, current === SLIDES.length - 1 && styles.floatBtnDisabled]}
+                        onPress={() => goTo(current + 1)}
+                        disabled={current === SLIDES.length - 1}
+                    >
+                        <Text style={styles.floatBtnText}>›</Text>
+                    </Pressable>
+                </>
+            )}
+
+        </View>
+    );
+}
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STYLES PRINCIPAUX
+// ═══════════════════════════════════════════════════════════════════════════
 const styles = StyleSheet.create({
-    container: { flex: 1, backgroundColor: Colors.background },
+    container: {
+        flex: 1,
+        backgroundColor: Colors.background,
+    },
+
+    // ── Slide ─────────────────────────────────────────────────────
+    slide: {
+        flex: 1,
+        justifyContent: 'center',
+        paddingHorizontal: Spacing.lg,
+        paddingVertical: Spacing.xl,
+        position: 'relative',
+        overflow: 'hidden',
+    },
+    slideNumber: {
+        position: 'absolute',
+        right: 20,
+        top: 20,
+        fontSize: 120,
+        fontWeight: '900',
+        fontFamily: 'monospace',
+        lineHeight: 120,
+    },
+    slideInner: {
+        flex: 1,
+        flexDirection: 'column',
+        justifyContent: 'center',
+        gap: Spacing.xl,
+    },
+    slideInnerDesktop: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: Spacing.xxl,
+    },
+
+    // ── Colonne gauche ────────────────────────────────────────────
+    slideLeft: {
+        flex: 1,
+        gap: Spacing.md,
+        maxWidth: 500,
+    },
+    tag: {
+        alignSelf: 'flex-start',
+        borderWidth: 1,
+        borderRadius: BorderRadius.full,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.xs,
+    },
+    tagText: {
+        fontFamily: 'monospace',
+        fontSize: 11,
+        letterSpacing: 3,
+        textTransform: 'uppercase',
+    },
+    slideTitle: {
+        fontSize: 36,
+        fontWeight: '800',
+        color: Colors.text,
+        lineHeight: 44,
+    },
+    slideBody: {
+        fontSize: 15,
+        color: Colors.textDim,
+        lineHeight: 26,
+        maxWidth: 420,
+    },
+    accentLine: {
+        height: 3,
+        width: 40,
+        borderRadius: 2,
+        marginTop: Spacing.sm,
+    },
+
+    // ── Colonne droite ────────────────────────────────────────────
+    slideRight: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+
+    // ── Footer ────────────────────────────────────────────────────
+    footer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: Spacing.lg,
+        gap: Spacing.md,
+    },
+    dots: {
+        flexDirection: 'row',
+        gap: Spacing.sm,
+        alignItems: 'center',
+    },
+    dot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        backgroundColor: Colors.textDisabled,
+    },
+    dotActive: {
+        width: 24,
+        borderRadius: 4,
+    },
+    swipeHint: {
+        position: 'absolute',
+        bottom: -2,
+        fontFamily: 'monospace',
+        fontSize: 11,
+        color: Colors.textDisabled,
+        letterSpacing: 1,
+    },
+
+    // Boutons nav footer (desktop)
+    navBtn: {
+        width: 36, height: 36,
+        borderRadius: 18,
+        borderWidth: 1,
+        borderColor: Colors.textDim,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    navBtnDisabled: { opacity: 0.2 },
+    navBtnText: {
+        color: Colors.text,
+        fontSize: 20,
+        lineHeight: 22,
+    },
+
+    // Boutons flottants gauche/droite (desktop, style maquette)
+    floatBtn: {
+        position: 'absolute',
+        top: '50%' as any,
+        width: 52,
+        height: 52,
+        borderRadius: BorderRadius.md,
+        backgroundColor: Colors.neonGold,
+        alignItems: 'center',
+        justifyContent: 'center',
+        zIndex: 10,
+        shadowColor: Colors.neonGold,
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.4,
+        shadowRadius: 12,
+    },
+    floatBtnLeft:     { left: 12 },
+    floatBtnRight:    { right: 12 },
+    floatBtnDisabled: { opacity: 0.3 },
+    floatBtnText: {
+        color: Colors.background,
+        fontSize: 26,
+        fontWeight: '700',
+        lineHeight: 28,
+    },
+});
+
+
+// ═══════════════════════════════════════════════════════════════════════════
+// STYLES DES VISUELS
+// ═══════════════════════════════════════════════════════════════════════════
+const visStyles = StyleSheet.create({
+
+    // ── Avatar ────────────────────────────────────────────────────
+    avatarWrapper: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        position: 'relative',
+        paddingBottom: 30,
+    },
+    avatarFrame: {
+        width: 200, height: 200,
+        borderRadius: 100,
+        borderWidth: 2,
+        padding: 8,
+    },
+    avatarInner: {
+        flex: 1,
+        borderRadius: 92,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    avatarEmoji: { fontSize: 80 },
+    badge: {
+        position: 'absolute',
+        bottom: -10,
+        borderWidth: 1,
+        borderRadius: BorderRadius.full,
+        paddingHorizontal: Spacing.md,
+        paddingVertical: Spacing.xs,
+    },
+    badgeText: {
+        fontFamily: 'monospace',
+        fontSize: 12,
+        letterSpacing: 2,
+    },
+
+    // ── Skills ────────────────────────────────────────────────────
+    skillsWrapper: {
+        width: '100%',
+        maxWidth: 380,
+        gap: Spacing.md,
+    },
+    skillRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: Spacing.sm,
+    },
+    skillLabel: {
+        fontFamily: 'monospace',
+        fontSize: 12,
+        color: Colors.textDim,
+        width: 110,
+    },
+    skillBarBg: {
+        flex: 1,
+        height: 4,
+        backgroundColor: 'rgba(255,255,255,0.08)',
+        borderRadius: 2,
+        overflow: 'hidden',
+    },
+    skillBarFill: {
+        height: 4,
+        borderRadius: 2,
+    },
+    skillPct: {
+        fontFamily: 'monospace',
+        fontSize: 11,
+        width: 36,
+        textAlign: 'right',
+    },
+
+    // ── Timeline ──────────────────────────────────────────────────
+    timelineWrapper: {
+        width: '100%',
+        maxWidth: 380,
+        gap: 0,
+    },
+    timelineItem: {
+        flexDirection: 'row',
+        gap: Spacing.md,
+    },
+    timelineLine: {
+        alignItems: 'center',
+        width: 20,
+    },
+    timelineDot: {
+        width: 10, height: 10,
+        borderRadius: 5,
+        marginTop: 4,
+    },
+    timelineConnector: {
+        width: 2,
+        flex: 1,
+        marginVertical: 4,
+        minHeight: 30,
+    },
+    timelineContent: {
+        flex: 1,
+        paddingBottom: Spacing.lg,
+        gap: 2,
+    },
+    timelineYear: {
+        fontFamily: 'monospace',
+        fontSize: 11,
+        letterSpacing: 2,
+        fontWeight: '700',
+    },
+    timelineRole: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: Colors.text,
+    },
+    timelineDesc: {
+        fontSize: 12,
+        color: Colors.textDim,
+        lineHeight: 18,
+    },
+
+    // ── CV ────────────────────────────────────────────────────────
+    cvWrapper: {
+        alignItems: 'center',
+        gap: Spacing.lg,
+        maxWidth: 320,
+        width: '100%',
+    },
+    cvDoc: {
+        width: '100%',
+        borderWidth: 1,
+        borderRadius: BorderRadius.md,
+        overflow: 'hidden',
+        backgroundColor: 'rgba(255,255,255,0.03)',
+    },
+    cvHeader: {
+        padding: Spacing.md,
+        gap: 4,
+        marginBottom: Spacing.sm,
+    },
+    cvName: {
+        fontFamily: 'monospace',
+        fontSize: 16,
+        fontWeight: '700',
+        letterSpacing: 3,
+    },
+    cvJob: {
+        fontSize: 12,
+        color: Colors.textDim,
+        letterSpacing: 1,
+    },
+    cvLine: {
+        paddingHorizontal: Spacing.md,
+        paddingBottom: Spacing.sm,
+    },
+    cvLineBar: {
+        height: 8,
+        borderRadius: 4,
+    },
+    downloadBtn: {
+        borderWidth: 1.5,
+        borderRadius: BorderRadius.full,
+        paddingHorizontal: Spacing.xl,
+        paddingVertical: Spacing.md,
+        backgroundColor: 'transparent',
+    },
+    downloadText: {
+        fontFamily: 'monospace',
+        fontSize: 12,
+        fontWeight: '700',
+        letterSpacing: 2,
+    },
 });

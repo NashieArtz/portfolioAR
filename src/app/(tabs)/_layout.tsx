@@ -13,13 +13,9 @@ export default function TabLayout() {
             <AnimatedSplashOverlay />
 
             <Tabs
-                // On cache la tabBar native d'Expo — on la remplace
-                // par notre drawer custom dans app-tabs.web.tsx
                 tabBar={() => null}
                 screenOptions={{ headerShown: false }}
             >
-                {/* Chaque Tabs.Screen = une route déclarée */}
-                {/* En PHP : $router->add('/','index.php') */}
                 <Tabs.Screen name="index"   options={{ title: 'Accueil' }} />
                 <Tabs.Screen name="projets" options={{ title: 'Projets' }} />
                 <Tabs.Screen name="about"   options={{ title: 'À propos' }} />

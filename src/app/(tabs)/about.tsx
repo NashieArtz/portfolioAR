@@ -8,6 +8,7 @@ import {
     ScrollView,
     StyleSheet,
     Text,
+    Linking,
     useWindowDimensions,
     View,
 } from 'react-native';
@@ -21,8 +22,8 @@ const SLIDES = [
     {
         id: 1,
         tag: 'Qui je suis',
-        title: 'Développeur\npassionné par\nl\'expérience AR',
-        body: 'Je suis un développeur web et mobile spécialisé dans les expériences immersives. Fasciné par la réalité augmentée depuis mes débuts, je crée des interfaces qui brouillent la frontière entre le numérique et le réel.',
+        title: 'Ange Wu\nDéveloppeur\nWeb',
+        body: 'Étudiant en développement web et amoureux des étoiles, je perfectionne mes compétences pour les atteindre.',
         accent: Colors.neonPink,
         number: '01',
         visual: 'avatar',
@@ -31,7 +32,7 @@ const SLIDES = [
         id: 2,
         tag: 'Compétences',
         title: 'Stack technique\net expertise',
-        body: 'Du front-end au mobile en passant par la 3D web, je maîtrise un large spectre d\'outils modernes pour créer des expériences uniques.',
+        body: 'Du front-end à une expérience full-stack en passant par plusieurs technos, je conçois d\'apprendre plus et créer ce qui m\'intéresse',
         accent: Colors.neonGold,
         number: '02',
         visual: 'skills',
@@ -40,7 +41,7 @@ const SLIDES = [
         id: 3,
         tag: 'Parcours',
         title: 'Mon chemin\njusqu\'ici',
-        body: 'Un parcours atypique entre agences créatives, projets freelance et expérimentations personnelles — chaque étape a forgé ma vision du web immersif.',
+        body: 'Un parcours atypique à découvrir le monde et moi-même',
         accent: Colors.neonBlue,
         number: '03',
         visual: 'timeline',
@@ -49,7 +50,7 @@ const SLIDES = [
         id: 4,
         tag: 'CV',
         title: 'Curriculum\nVitae',
-        body: 'Retrouvez l\'ensemble de mon expérience professionnelle, mes formations et mes certifications dans mon CV complet.',
+        body: 'Retrouvez l\'ensemble de mon expérience, mon parcours, mes formations et mes compétences dans mon CV complet.',
         accent: Colors.neonPink,
         number: '04',
         visual: 'cv',
@@ -57,19 +58,25 @@ const SLIDES = [
 ];
 
 const SKILLS = [
-    { label: 'React Native',  level: 85 },
-    { label: 'A-Frame / AR',  level: 78 },
-    { label: 'TypeScript',    level: 80 },
-    { label: 'Three.js',      level: 65 },
-    { label: 'PHP / Laravel', level: 90 },
-    { label: 'UI/UX Design',  level: 72 },
+    { label: 'HTML/CSS',  level: 60 },
+    { label: 'PHP', level: 50 },
+    { label: 'Java',  level: 45 },
+    { label: 'JavaScript',  level: 40 },
+    { label: 'React Native',  level: 40 },
+    { label: 'React.js',  level: 40 },
+    { label: 'SQL',  level: 40 },
+    { label: 'UI/UX Design',  level: 35 },
+    { label: 'A-Frame & AR.js',  level: 30 },
+    { label: 'Laravel',    level: 20 },
+    { label: 'Tailwind CSS',      level: 20 },
 ];
 
 const TIMELINE = [
-    { year: '2024', role: 'Développeur AR freelance',    desc: 'Création de portfolios immersifs en réalité augmentée.' },
-    { year: '2022', role: 'Lead Front-end',              desc: 'Direction technique front chez une agence digitale parisienne.' },
-    { year: '2020', role: 'Développeur full-stack',      desc: 'Conception d\'applications web et mobile pour des startups.' },
-    { year: '2018', role: 'Formation développement web', desc: 'Spécialisation en développement web et interfaces interactives.' },
+    { year: '2025', role: 'Développeur Web',              desc: 'Étudiant développeur web à la Need For School à Rouen' },
+    { year: '2022', role: 'Développeur Application',      desc: 'Étudiant en license en informatique et génie logiciel à Montréal' },
+    { year: '2018', role: 'Étudiant',      desc: 'Étudiant au Liceo Franco-Mexicano à Mexico' },
+    { year: '2016', role: 'Étudiant',      desc: 'Étudiant au J.F.K High School à Fremont en Californie' },
+    { year: '2010', role: 'Étudiant', desc: 'Étudiant au Lycée Français de Barcelone' },
 ];
 
 function VisualAvatar({ accent }: { accent: string }) {
@@ -77,11 +84,14 @@ function VisualAvatar({ accent }: { accent: string }) {
         <View style={visStyles.avatarWrapper}>
             <View style={[visStyles.avatarFrame, { borderColor: accent }]}>
                 <View style={[visStyles.avatarInner, { backgroundColor: `${accent}15` }]}>
-                    <Text style={[visStyles.avatarEmoji]}>👨‍💻</Text>
+                        <Image
+                            source={require("@/assets/images/pfp.jpeg")}
+                            style={visStyles.avatar}
+                        />
                 </View>
             </View>
             <View style={[visStyles.badge, { backgroundColor: `${accent}20`, borderColor: `${accent}50` }]}>
-                <Text style={[visStyles.badgeText, { color: accent }]}>AR Developer</Text>
+                <Text style={[visStyles.badgeText, { color: accent }]}>Développeur</Text>
             </View>
         </View>
     );
@@ -129,12 +139,16 @@ function VisualTimeline({ accent }: { accent: string }) {
 }
 
 function VisualCV({ accent }: { accent: string }) {
+    const downloadCV = () => {
+        Linking.openURL('https://qtadi6o-nashie_artz-8081.exp.direct/cv-ange-wu.pdf');
+    };
+
     return (
         <View style={visStyles.cvWrapper}>
             <View style={[visStyles.cvDoc, { borderColor: `${accent}30` }]}>
                 <View style={[visStyles.cvHeader, { backgroundColor: `${accent}15` }]}>
-                    <Text style={[visStyles.cvName, { color: accent }]}>Lilian Dasques</Text>
-                    <Text style={visStyles.cvJob}>AR Developer & Designer</Text>
+                    <Text style={[visStyles.cvName, { color: accent }]}>Ange Wu</Text>
+                    <Text style={visStyles.cvJob}>Développeur Web</Text>
                 </View>
                 {[1,2,3].map(i => (
                     <View key={i} style={visStyles.cvLine}>
@@ -142,7 +156,7 @@ function VisualCV({ accent }: { accent: string }) {
                     </View>
                 ))}
             </View>
-            <Pressable style={[visStyles.downloadBtn, { borderColor: accent }]}>
+            <Pressable style={[visStyles.downloadBtn, { borderColor: accent }]} onPress={downloadCV}>
                 <Text style={[visStyles.downloadText, { color: accent }]}>↓  TÉLÉCHARGER LE CV</Text>
             </Pressable>
         </View>
@@ -447,7 +461,13 @@ const visStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
     },
-    avatarEmoji: { fontSize: 80 },
+    avatar: {
+        width: 190,
+        height: 190,
+        borderRadius: 100,
+        borderWidth: 2,
+        padding: 8,
+    },
     badge: {
         position: 'absolute',
         bottom: -10,

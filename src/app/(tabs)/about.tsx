@@ -18,6 +18,10 @@ import { Colors, Spacing, BorderRadius } from '@/constants/theme';
 const TOPBAR_H   = 56;
 const DESKTOP_BP = 768;
 
+/**
+ *
+ * on sépare les responsabilités, données statiques pour éviter de recréer à chaque rendu
+ */
 const SLIDES = [
     {
         id: 1,
@@ -79,6 +83,13 @@ const TIMELINE = [
     { year: '2010', role: 'Étudiant', desc: 'Étudiant au Lycée Français de Barcelone' },
 ];
 
+/**
+ * Fonction permettant de voir l'avatar, séparation des méthodes et contenu avec balises expo pour le rendu
+ *
+ * @param param0
+ * @param param0.accent
+ * @constructor
+ */
 function VisualAvatar({ accent }: { accent: string }) {
     return (
         <View style={visStyles.avatarWrapper}>
@@ -139,6 +150,7 @@ function VisualTimeline({ accent }: { accent: string }) {
 }
 
 function VisualCV({ accent }: { accent: string }) {
+    // Ouverture URL avec Linking par tunnel NGROK
     const downloadCV = () => {
         Linking.openURL('https://qtadi6o-nashie_artz-8081.exp.direct/cv-ange-wu.pdf');
     };
@@ -150,6 +162,7 @@ function VisualCV({ accent }: { accent: string }) {
                     <Text style={[visStyles.cvName, { color: accent }]}>Ange Wu</Text>
                     <Text style={visStyles.cvJob}>Développeur Web</Text>
                 </View>
+                {/* Génération faux texte avec tableaux 3 lignes et 3 nombres sur boucle */}
                 {[1,2,3].map(i => (
                     <View key={i} style={visStyles.cvLine}>
                         <View style={[visStyles.cvLineBar, { width: `${85 - i * 15}%` as any, backgroundColor: `${accent}25` }]} />
@@ -163,6 +176,14 @@ function VisualCV({ accent }: { accent: string }) {
     );
 }
 
+/**
+ * Méthode factory, gère rendu visuel selon le type
+ *
+ * @param param0
+ * @param param0.type
+ * @param param0.accent
+ * @constructor
+ */
 function SlideVisual({ type, accent }: { type: string; accent: string }) {
     switch (type) {
         case 'skills':   return <VisualSkills   accent={accent} />;
@@ -173,6 +194,7 @@ function SlideVisual({ type, accent }: { type: string; accent: string }) {
 }
 
 function Slide({ slide, width }: { slide: typeof SLIDES[0]; width: number }) {
+    // Responsive design
     const isDesktop = width >= DESKTOP_BP;
 
     return (
@@ -201,19 +223,29 @@ function Slide({ slide, width }: { slide: typeof SLIDES[0]; width: number }) {
     );
 }
 
+/**
+ * Visuel et méthode par défaut
+ *
+ * @constructor
+ */
 export default function AboutScreen() {
+    // Adaptation de l'UI en temps réel en dépend taille écran
     const { width }  = useWindowDimensions();
     const isDesktop  = width >= DESKTOP_BP;
+    // Keep en mémoire la diapositive actuelle
     const [current, setCurrent] = useState(0);
-
+    // Intéraction direct avec mñethodes impératives de ScrollView
     const scrollRef = useRef<ScrollView>(null);
 
+    // Navigation
     const goTo = (index: number) => {
+        // Sécu, éviter dépassement limites du tableau
         const clamped = Math.max(0, Math.min(index, SLIDES.length - 1));
         setCurrent(clamped);
         scrollRef.current?.scrollTo({ x: clamped * width, animated: true });
     };
 
+    // Défilement manuel, savoir sur queñle diapo l'user se trouve pour mettre à jour le point en bas de l'écran
     const onScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
         const index = Math.round(e.nativeEvent.contentOffset.x / width);
         setCurrent(index);
@@ -238,6 +270,7 @@ export default function AboutScreen() {
                 ))}
             </ScrollView>
 
+            {/*Pagination*/}
             <View style={styles.footer}>
                 {isDesktop && (
                     <Pressable

@@ -42,7 +42,6 @@ function HeroText({ onPress, style }: { onPress: () => void, style?: any }) {
     );
 }
 
-// ─── Image du téléphone ───────────────────────────────────────────────────────
 function PhoneMockup({ phoneSize }: { phoneSize: number }) {
     return (
         <Image
@@ -65,7 +64,6 @@ export default function HomeScreen() {
             resizeMode={"cover"}
             style={[styles.bg]}
         >
-            {/* Overlay sombre par-dessus l'image de fond */}
             <View style={styles.overlay} />
 
             <View style={[
@@ -103,7 +101,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(0,0,0,0.45)',
     },
 
-    // Mobile : colonne
+    // Mobile: colonne
     content: {
         flex: 1,
         alignItems: 'center',
@@ -113,7 +111,7 @@ const styles = StyleSheet.create({
         flexDirection: 'column',
     },
 
-    // Desktop : ligne
+
     contentDesktop: {
         flexDirection: 'row',
         justifyContent: 'space-evenly',
@@ -121,7 +119,6 @@ const styles = StyleSheet.create({
         paddingHorizontal: 60,
     },
 
-    // ── Texte hero ────────────────────────────────────────────────
     heroText: {
         alignItems: 'flex-start',
         gap: Spacing.md,

@@ -17,7 +17,11 @@
             --text-dim: rgba(255, 255, 255, 0.6);
         }
 
-        body, html { margin: 0; overflow: hidden; font-family: monospace; }
+        body, html {
+            margin: 0;
+            overflow: hidden;
+            font-family: monospace;
+        }
 
         .nav-btn {
             display: none;
@@ -35,11 +39,19 @@
             backdrop-filter: blur(4px);
             transition: background 0.2s;
         }
-        .nav-btn:active { background: var(--neon-gold-hover); }
-        #btn-prev { left: calc(50% - 100px); }
-        #btn-next { left: calc(50% + 44px); }
 
-        /* ── CORRECTION : Compteur déplacé en HAUT façon "Badge" ── */
+        .nav-btn:active {
+            background: var(--neon-gold-hover);
+        }
+
+        #btn-prev {
+            left: calc(50% - 100px);
+        }
+
+        #btn-next {
+            left: calc(50% + 44px);
+        }
+
         #card-counter {
             display: none;
             position: fixed;
@@ -47,7 +59,7 @@
             left: 50%;
             transform: translateX(-50%);
             color: var(--neon-gold);
-            border: 1px solid rgba(201,168,76,0.5);
+            border: 1px solid rgba(201, 168, 76, 0.5);
             background: var(--neon-gold-bg);
             padding: 6px 16px;
             border-radius: 999px;
@@ -57,7 +69,7 @@
             backdrop-filter: blur(4px);
         }
 
-        /* ── Bouton Flottant Principal (CTA) ── */
+
         #floating-btn {
             display: none;
             position: fixed;
@@ -77,23 +89,28 @@
             backdrop-filter: blur(4px);
             text-transform: uppercase;
         }
-        #floating-btn:active { background: var(--neon-gold-hover); }
 
-        /* ── Conteneur des actions (GitHub / Stack) ── */
+        #floating-btn:active {
+            background: var(--neon-gold-hover);
+        }
+
         .card-btns {
             display: none;
             position: fixed;
-            bottom: 116px; /* Reste en bas, ne chevauche plus le compteur */
+            bottom: 116px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 200;
             gap: 12px;
             flex-direction: row;
         }
-        .card-btns.visible { display: flex; }
+
+        .card-btns.visible {
+            display: flex;
+        }
 
         .card-action-btn {
-            background: rgba(233, 30, 140, 0.08); /* Fond Pink */
+            background: rgba(233, 30, 140, 0.08);
             color: var(--text-main);
             border: 1.5px solid var(--neon-pink);
             border-radius: 999px;
@@ -105,9 +122,12 @@
             text-transform: uppercase;
             backdrop-filter: blur(4px);
         }
-        .card-action-btn:active { background: rgba(233, 30, 140, 0.22); }
 
-        /* ── Panneau de Technologies ── */
+        .card-action-btn:active {
+            background: rgba(233, 30, 140, 0.22);
+        }
+
+        x
         #tech-panel {
             display: none;
             position: fixed;
@@ -122,6 +142,7 @@
             min-width: 280px;
             text-align: center;
         }
+
         #tech-panel h3 {
             margin: 0 0 12px 0;
             color: var(--neon-pink);
@@ -129,17 +150,23 @@
             letter-spacing: 2px;
             text-transform: uppercase;
         }
+
         #tech-panel .tags {
-            display: flex; flex-wrap: wrap; gap: 8px; justify-content: center;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            justify-content: center;
         }
+
         #tech-panel .tag {
-            background: rgba(255,255,255,0.05);
+            background: rgba(255, 255, 255, 0.05);
             color: var(--text-main);
-            border: 1px solid rgba(255,255,255,0.2);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             border-radius: 999px;
             padding: 4px 12px;
             font-size: 11px;
         }
+
         #tech-panel .close-tech {
             margin-top: 14px;
             display: block;
@@ -171,7 +198,10 @@
             align-items: center;
             gap: 6px;
         }
-        #back-btn:active { background: var(--neon-gold-hover); }
+
+        #back-btn:active {
+            background: var(--neon-gold-hover);
+        }
     </style>
 </head>
 <body>
@@ -195,15 +225,17 @@
 
 <a href="/" id="back-btn">‹ Accueil</a>
 
+<!-- Créer une scène ainsi que déclarer les composants qui viendront apparaitre-->
 <a-scene embedded arjs='sourceType: webcam; debugUIEnabled: false;'>
     <a-assets>
-        <img id="img-crm"     src="/projects/proj_crm_1.png">
-        <img id="img-web4"    src="/projects/proj_web4_1.png">
+        <img id="img-crm" src="/projects/proj_crm_1.png">
+        <img id="img-web4" src="/projects/proj_web4_1.png">
         <img id="img-mustcle" src="/projects/proj_mustcle_1.png">
-        <img id="img-hydro"   src="/projects/proj_hydrouqam.png">
-        <img id="img-tower"   src="/projects/proj_tower_2.png">
+        <img id="img-hydro" src="/projects/proj_hydrouqam.png">
+        <img id="img-tower" src="/projects/proj_tower_2.png">
     </a-assets>
 
+    <!--Définir le marqueur-->
     <a-marker preset="hiro" id="main-marker">
 
         <a-text value="Ange WU" position="0 0.2 -1.5"
@@ -214,62 +246,85 @@
         <a-entity id="cards-container" visible="false" position="0 0.2 0.5"
                   animation="property: position; to: 0 0.3 0.5; dir: alternate; dur: 2000; loop: true; easing: easeInOutSine">
 
+            <!-- Entité pour les figures et regrouper; (x,y,z) -->
             <a-entity position="-14 0 0">
-                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <!-- Surface plate-->
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95"
+                         material="shader: flat;"></a-plane>
                 <a-image src="#img-crm" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
-                <a-text value="CRM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
-                <a-text value="Gestion relation client" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+                <a-text value="CRM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C"
+                        width="6"></a-text>
+                <a-text value="Gestion relation client" position="0 0.05 0.65" rotation="-75 0 0" align="center"
+                        color="#FFFFFF" opacity="0.6" width="4"></a-text>
             </a-entity>
 
             <a-entity position="-10.5 0 0">
-                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95"
+                         material="shader: flat;"></a-plane>
                 <a-image src="#img-web4" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
-                <a-text value="Web4Heroes" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
-                <a-text value="Application web heroique" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+                <a-text value="Web4Heroes" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C"
+                        width="6"></a-text>
+                <a-text value="Application web heroique" position="0 0.05 0.65" rotation="-75 0 0" align="center"
+                        color="#FFFFFF" opacity="0.6" width="4"></a-text>
             </a-entity>
 
             <a-entity position="-7 0 0">
-                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
-                <a-image src="#img-mustcle" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
-                <a-text value="MUSTcle" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
-                <a-text value="App fitness personnalisee" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95"
+                         material="shader: flat;"></a-plane>
+                <a-image src="#img-mustcle" width="2.2" height="1.1" position="0 0.2 -0.45"
+                         rotation="-75 0 0"></a-image>
+                <a-text value="MUSTcle" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C"
+                        width="6"></a-text>
+                <a-text value="App fitness personnalisee" position="0 0.05 0.65" rotation="-75 0 0" align="center"
+                        color="#FFFFFF" opacity="0.6" width="4"></a-text>
             </a-entity>
 
             <a-entity position="-3.5 0 0">
-                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95"
+                         material="shader: flat;"></a-plane>
                 <a-image src="#img-hydro" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
-                <a-text value="Hydro UQAM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
-                <a-text value="Gestion hydraulique UQAM" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+                <a-text value="Hydro UQAM" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C"
+                        width="6"></a-text>
+                <a-text value="Gestion hydraulique UQAM" position="0 0.05 0.65" rotation="-75 0 0" align="center"
+                        color="#FFFFFF" opacity="0.6" width="4"></a-text>
             </a-entity>
 
             <a-entity position="0 0 0">
-                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95" material="shader: flat;"></a-plane>
+                <a-plane width="2.4" height="2.2" rotation="-75 0 0" color="#0A0A0F" opacity="0.95"
+                         material="shader: flat;"></a-plane>
                 <a-image src="#img-tower" width="2.2" height="1.1" position="0 0.2 -0.45" rotation="-75 0 0"></a-image>
-                <a-text value="Tower Defense" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C" width="6"></a-text>
-                <a-text value="Jeu de strategie temps reel" position="0 0.05 0.65" rotation="-75 0 0" align="center" color="#FFFFFF" opacity="0.6" width="4"></a-text>
+                <a-text value="Tower Defense" position="0 0.05 0.3" rotation="-75 0 0" align="center" color="#C9A84C"
+                        width="6"></a-text>
+                <a-text value="Jeu de strategie temps reel" position="0 0.05 0.65" rotation="-75 0 0" align="center"
+                        color="#FFFFFF" opacity="0.6" width="4"></a-text>
             </a-entity>
 
         </a-entity>
     </a-marker>
+    <!-- Utiliser la caméra-->
     <a-entity camera></a-entity>
 </a-scene>
 
 <script>
+    /* Gestion globale de l'état du slider AR */
     const TOTAL_CARDS = 5;
     let currentCard = 0;
     let cardsVisible = false;
     let techOpen = false;
 
+    // Pos précise sur X, centrer carte demandée
     const cardStartX = [-14, -10.5, -7, -3.5, 0];
 
+    // BDD simulée
     const cardData = [
-        { github: 'https://github.com/NashieArtz/crm', tech: ['React.js', 'Laravel', 'PostgreSQL', 'TailWind'] },
-        { github: 'https://github.com/NashieArtz/web4heroes', tech: ['MVC', 'PHP', 'JS', 'MySQL'] },
-        { github: '#', tech: ['Wordpress'] },
-        { github: 'https://github.com/NashieArtz/hydrouqam', tech: ['Assembleur'] },
-        { github: 'https://github.com/NashieArtz/tours-de-defense', tech: ['Java'] }
+        {github: 'https://github.com/NashieArtz/crm', tech: ['React.js', 'Laravel', 'PostgreSQL', 'TailWind']},
+        {github: 'https://github.com/NashieArtz/web4heroes', tech: ['MVC', 'PHP', 'JS', 'MySQL']},
+        {github: '#', tech: ['Wordpress']},
+        {github: 'https://github.com/NashieArtz/hydrouqam', tech: ['Assembleur']},
+        {github: 'https://github.com/NashieArtz/tours-de-defense', tech: ['Java']}
     ];
 
+    // Initaliser la vue, affiche 3D + contrôles
     function showCards() {
         cardsVisible = true;
         document.getElementById('cards-container').setAttribute('visible', 'true');
@@ -282,12 +337,14 @@
         goToCard(0);
     }
 
+    // Slider, modifie la pos du conteneur avec animation A-frame
     function goToCard(index) {
         currentCard = index;
         techOpen = false;
         document.getElementById('tech-panel').style.display = 'none';
         const container = document.getElementById('cards-container');
 
+        // Injection dynamique d'une nouvelle animation, basée sur index ciblé
         container.setAttribute('animation__slide', {
             property: 'position',
             to: `${-cardStartX[index]} 0.2 0.5`,
@@ -296,6 +353,7 @@
         });
 
         updateCounter();
+        // Gère opacité boutons
         updateBtns();
     }
 
@@ -320,6 +378,7 @@
         window.open(cardData[currentCard].github, '_blank');
     }
 
+    // Transformation du tableau en balise HTML
     function toggleTech() {
         if (techOpen) {
             closeTech();
@@ -337,6 +396,7 @@
         techOpen = false;
     }
 
+    // Si caméra perd marqueur, on nettoie le UI
     function hideAllUI() {
         document.getElementById('floating-btn').style.display = 'none';
         document.getElementById('btn-prev').style.display = 'none';
@@ -347,10 +407,12 @@
     }
 
     document.querySelector('a-scene').addEventListener('loaded', () => {
+        // Marqueur trouvé, on déclenche les événements
         document.querySelector('#main-marker').addEventListener('markerFound', () => {
             if (!cardsVisible) {
                 document.getElementById('floating-btn').style.display = 'block';
             } else {
+                // Restauration UI
                 document.getElementById('btn-prev').style.display = 'block';
                 document.getElementById('btn-next').style.display = 'block';
                 document.getElementById('card-counter').style.display = 'block';

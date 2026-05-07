@@ -30,7 +30,7 @@ const LINKS = [
     },
     {
         label: 'LinkedIn',
-        value: '/in/ange-wu',
+        value: 'ange-wu',
         icon: '◈',
         accent: NEON_GOLD,
         action: () => Linking.openURL('https://www.linkedin.com/in/ange-wu-959357229/'),

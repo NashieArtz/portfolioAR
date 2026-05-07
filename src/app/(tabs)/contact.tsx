@@ -23,7 +23,7 @@ const DESKTOP_BP  = 768;
 const LINKS = [
     {
         label: 'Email',
-        value: 'ange.wu@email.com',
+        value: 'angel.wu@hotmail.fr',
         icon: '✉',
         accent: NEON_PINK,
         action: () => Linking.openURL('mailto:angel.wu@hotmail.fr'),

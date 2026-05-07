@@ -19,7 +19,7 @@ function HeroText({ onPress, style }: { onPress: () => void, style?: any }) {
         <View style={[styles.heroText, style]}>
 
             <View style={styles.badge}>
-                <Text style={styles.badgeText}>✦ AR PORTFOLIO</Text>
+                <Text style={styles.badgeText}>ANGE WU</Text>
             </View>
 
             <Text style={styles.title}>
@@ -75,13 +75,13 @@ export default function HomeScreen() {
             ]}>
                 {isDesktop ? (
                     <>
-                        <HeroText style={{paddingBottom: "200"}} onPress={() => router.push('/scanner')} />
+                        <HeroText style={{paddingBottom: "200"}} onPress={() => router.push('/ar-view')} />
                         <PhoneMockup phoneSize={phoneSize} />
                     </>
                 ) : (
                     <>
                         <PhoneMockup phoneSize={phoneSize} />
-                        <HeroText onPress={() => router.push('/scanner')} />
+                        <HeroText onPress={() => router.push('/ar-view')} />
                     </>
                 )}
             </View>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
     },
     badgeText: {
         fontFamily: 'monospace',
-        fontSize: 11,
+        fontSize: 20,
         color: Colors.neonGold,
         letterSpacing: 3,
     },
